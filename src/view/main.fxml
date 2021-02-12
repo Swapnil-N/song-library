@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="310.0" prefWidth="557.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ListView layoutX="26.0" layoutY="28.0" prefHeight="250.0" prefWidth="241.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="290.0" AnchorPane.topAnchor="30.0" />
+      <Button layoutX="307.0" layoutY="227.0" mnemonicParsing="false" text="Add" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="307.0" AnchorPane.rightAnchor="212.0" AnchorPane.topAnchor="227.0" />
+      <Button layoutX="389.0" layoutY="227.0" mnemonicParsing="false" text="Edit" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="389.0" AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="227.0" />
+      <Button layoutX="471.0" layoutY="227.0" mnemonicParsing="false" text="Delete" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="471.0" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="227.0" />
+      <TextField layoutX="367.0" layoutY="136.0" AnchorPane.bottomAnchor="101.0" AnchorPane.leftAnchor="367.0" AnchorPane.rightAnchor="41.0" AnchorPane.topAnchor="184.0" />
+      <TextField layoutX="367.0" layoutY="87.0" AnchorPane.bottomAnchor="149.0" AnchorPane.leftAnchor="367.0" AnchorPane.rightAnchor="41.0" AnchorPane.topAnchor="136.0" />
+      <TextField layoutX="367.0" layoutY="87.0" AnchorPane.bottomAnchor="198.0" AnchorPane.leftAnchor="367.0" AnchorPane.rightAnchor="41.0" AnchorPane.topAnchor="87.0" />
+      <TextField layoutX="367.0" layoutY="37.0" AnchorPane.bottomAnchor="248.0" AnchorPane.leftAnchor="367.0" AnchorPane.rightAnchor="41.0" AnchorPane.topAnchor="37.0" />
+      <Text layoutX="289.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Song Name" AnchorPane.bottomAnchor="252.98828125" AnchorPane.leftAnchor="289.0" AnchorPane.rightAnchor="236.755859375" AnchorPane.topAnchor="41.05078125" />
+      <Text layoutX="320.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Artist" AnchorPane.bottomAnchor="202.0" AnchorPane.leftAnchor="320.0" AnchorPane.rightAnchor="208.95703125" AnchorPane.topAnchor="91.0" />
+      <Text layoutX="317.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Album" AnchorPane.bottomAnchor="153.0" AnchorPane.leftAnchor="317.0" AnchorPane.rightAnchor="205.171875" AnchorPane.topAnchor="140.0" />
+      <Text layoutX="328.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Year" AnchorPane.bottomAnchor="105.0" AnchorPane.leftAnchor="327.185546875" AnchorPane.rightAnchor="205.814453125" AnchorPane.topAnchor="188.0" />
+      <Button layoutX="433.0" layoutY="268.0" mnemonicParsing="false" text="Save" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="433.0" AnchorPane.rightAnchor="83.0" AnchorPane.topAnchor="268.0" />
+      <Button layoutX="341.0" layoutY="268.0" mnemonicParsing="false" text="Cancel" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="341.0" AnchorPane.rightAnchor="164.0" AnchorPane.topAnchor="268.0" />
+   </children>
+</AnchorPane>
