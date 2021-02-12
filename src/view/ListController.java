@@ -65,7 +65,10 @@ public class ListController {
 		
 		listView.setItems(obsList);
 
-		listView.getSelectionModel().select(0);
+		if (obsList.size() > 0) {
+			listView.getSelectionModel().select(0);
+			showItem(mainStage);
+		}
 		
 		listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> showItem(mainStage));
 	}
