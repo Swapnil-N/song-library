@@ -53,13 +53,13 @@ public class Song implements Comparable<Song>{
 	@Override
 	public int compareTo(Song o) {
 		// TODO Auto-generated method stub
-		if (name.compareTo(o.getName()) < 0)
+		if (name.toLowerCase().compareTo(o.getName().toLowerCase()) < 0)
 			return -1;
-		if (name.compareTo(o.getName()) > 0)
+		if (name.toLowerCase().compareTo(o.getName().toLowerCase()) > 0)
 			return 1;
-		if (artist.compareTo(o.getName()) < 0)
+		if (artist.toLowerCase().compareTo(o.getArtist().toLowerCase()) < 0)
 			return -1;
-		if (artist.compareTo(o.getName()) > 0)
+		if (artist.toLowerCase().compareTo(o.getArtist().toLowerCase()) > 0)
 			return 1;
 		return 0;
 	}
