@@ -43,12 +43,12 @@ public class ListController {
 		String row = "";
 
 		try {
-			BufferedReader csvReader = new BufferedReader(new FileReader("songs.csv"));
-			while ((row = csvReader.readLine()) != null) {
+			BufferedReader fileReader = new BufferedReader(new FileReader("songs.txt"));
+			while ((row = fileReader.readLine()) != null) {
 				String[] data = row.split("\\|");
 				songList.add(new Song(data[0], data[1], data[2], data[3]));
 			}
-			csvReader.close();
+			fileReader.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
