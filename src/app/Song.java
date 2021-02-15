@@ -8,10 +8,10 @@ public class Song implements Comparable<Song>{
 	String year;
 	
 	public Song(String name, String artist, String album, String year) {
-		this.name = name;
-		this.artist = artist;
-		this.album = album;
-		this.year = year;
+		this.name = name.trim();
+		this.artist = artist.trim();
+		this.album = album.trim();
+		this.year = year.trim();
 	}
 	
 	public String getName() {
@@ -52,7 +52,7 @@ public class Song implements Comparable<Song>{
 
 	@Override
 	public int compareTo(Song o) {
-		// TODO Auto-generated method stub
+				
 		if (name.toLowerCase().compareTo(o.getName().toLowerCase()) < 0)
 			return -1;
 		if (name.toLowerCase().compareTo(o.getName().toLowerCase()) > 0)

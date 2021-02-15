@@ -1,2 +1,4 @@
-Starboy|The Weeknd|\N|2016
-Blinding Lights|The Weeknd|\N|\N
+Starboy|The Weeknd| |2016|
+Blinding Lights|The Weeknd| | |
+AAAAA|AAAAA| | |
+GGGGG|GGGGG| | |

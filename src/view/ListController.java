@@ -40,6 +40,7 @@ public class ListController {
 
 	private List<Song> songList;
 	private ObservableList<String> obsList;
+	private boolean edit;
 
 	public void start(Stage mainStage) {
 		
@@ -60,10 +61,9 @@ public class ListController {
 			e.printStackTrace();
 		}
 		
-		Collections.sort(songList);
+		edit = false;
 		
-		for (int i = 0; i < songList.size(); i++)
-			obsList.add(songList.get(i).getDisplayString());
+		addToObsList();
 		
 		listView.setItems(obsList);
 
@@ -75,14 +75,24 @@ public class ListController {
 		listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> showItem(mainStage));
 	}
 	
+	public void addToObsList() {
+		
+		Collections.sort(songList);
+		
+		obsList.clear();
+		
+		for (int i = 0; i < songList.size(); i++)
+			obsList.add(songList.get(i).getDisplayString());
+		
+	}
+	
 	public void onActionEdit(ActionEvent e) {
 		
 		Button editButton = (Button)e.getSource();
+		
+		edit = true;
 				
-		songName.setEditable(true);
-		songArtist.setEditable(true);
-		songAlbum.setEditable(true);
-		songYear.setEditable(true);
+		editable(true);
 		
 	}
 	
@@ -90,23 +100,17 @@ public class ListController {
 		
 		updateFields();
 		
-		songName.setEditable(false);
-		songArtist.setEditable(false);
-		songAlbum.setEditable(false);
-		songYear.setEditable(false);
+		editable(false);
 	}
 	
 	public void onActionAdd(ActionEvent e) {
 		
-		songName.setText("");
+		songName.setText(""); //change this to update
 		songArtist.setText("");
 		songAlbum.setText("");
 		songYear.setText("");
-		
-		songName.setEditable(true);
-		songArtist.setEditable(true);
-		songAlbum.setEditable(true);
-		songYear.setEditable(true);
+				
+		editable(true);
 		
 	}
 	
@@ -119,26 +123,63 @@ public class ListController {
 		songList.remove(index);
 		obsList.remove(index);
 		
-		if (obsList.size() > 0) { //TODO: add proper index selection after delete
-			listView.getSelectionModel().select(0);
-			updateFields();
-		}
-		else {
-			songName.setText("");
-			songArtist.setText("");
-			songAlbum.setText("");
-			songYear.setText("");
-		}
+		if (index >= obsList.size())
+			index = obsList.size()-1;
+		listView.getSelectionModel().select(index);
+		
+		updateFields();
 		
 	}
 	
 	
 	public void onActionSave(ActionEvent e) {
+				
+		if (!songName.isEditable())
+			return;
+		
+		Song newSong = new Song(songName.getText(), songArtist.getText(), songAlbum.getText(), songYear.getText());
+		
+		if (newSong.getName().length() == 0 || newSong.getArtist().length() == 0) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Missing Info");
+			alert.setContentText("Please Enter a Song Name AND a Song Artist");
+			alert.showAndWait();
+			return;
+		}
+		
+		for (int i=0; i<songList.size(); i++) {
+			if (newSong.compareTo(songList.get(i)) == 0) { //equals or .contains do no work
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Duplicate Error");
+				alert.setContentText("The Song Name and Song Artist are already in the list");
+				alert.showAndWait();
+				return;
+			}
+		} 
+		
+		if(edit)
+			onActionDelete(null);
+		
+		songList.add(newSong);
+		addToObsList();
+		
+		listView.getSelectionModel().select(songList.indexOf(newSong));
+		
+		editable(false);
+		
+	}
+	
+	private void editable(boolean bool) {
+		songName.setEditable(bool);
+		songArtist.setEditable(bool);
+		songAlbum.setEditable(bool);
+		songYear.setEditable(bool);		
 	}
 	
 
 	private void showItem(Stage mainStage) {		
-		
+		editable(false);
+		edit = false;
 		updateFields();
 	}
 	
@@ -156,16 +197,8 @@ public class ListController {
 		Song selectedSong = songList.get(index);
 		songName.setText(selectedSong.getName());
 		songArtist.setText(selectedSong.getArtist());
-		if (!selectedSong.getAlbum().equals("\\N")) {
-			songAlbum.setText(selectedSong.getAlbum());
-		} else {
-			songAlbum.setText("unavailable");
-		}
-		if (!selectedSong.getYear().equals("\\N")) {
-			songYear.setText(selectedSong.getYear());
-		} else {
-			songYear.setText("unavailable");
-		}
+		songAlbum.setText(selectedSong.getAlbum());
+		songYear.setText(selectedSong.getYear());
 		
 	}
 	
