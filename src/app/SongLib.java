@@ -14,8 +14,7 @@ public class SongLib extends Application {
 		// TODO Auto-generated method stub
 		
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(
-				getClass().getResource("/view/main.fxml"));
+		loader.setLocation(getClass().getResource("/view/main.fxml"));
 		AnchorPane root = (AnchorPane)loader.load();
 		
 		ListController listController = loader.getController();
@@ -26,12 +25,13 @@ public class SongLib extends Application {
 		primaryStage.setTitle("Song Library");
 		primaryStage.setResizable(false);
 		primaryStage.show();
+		
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
 		launch(args);
+		
 	}
 
 }

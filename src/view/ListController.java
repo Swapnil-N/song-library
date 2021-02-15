@@ -13,9 +13,11 @@ import java.util.Optional;
 import app.Song;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -33,11 +35,14 @@ public class ListController {
 	TextField songAlbum;
 	@FXML
 	TextField songYear;
+	//@FXML
+	//Button editButton;
 
 	private List<Song> songList;
 	private ObservableList<String> obsList;
 
 	public void start(Stage mainStage) {
+		
 		songList = new ArrayList<>();
 		obsList = FXCollections.observableArrayList();	
 		String row = "";
@@ -50,18 +55,15 @@ public class ListController {
 			}
 			fileReader.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		Collections.sort(songList);
 		
-		for (int i = 0; i < songList.size(); i++) {
+		for (int i = 0; i < songList.size(); i++)
 			obsList.add(songList.get(i).getDisplayString());
-		}
 		
 		listView.setItems(obsList);
 
@@ -72,10 +74,84 @@ public class ListController {
 		
 		listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> showItem(mainStage));
 	}
+	
+	public void onActionEdit(ActionEvent e) {
+		
+		Button editButton = (Button)e.getSource();
+				
+		songName.setEditable(true);
+		songArtist.setEditable(true);
+		songAlbum.setEditable(true);
+		songYear.setEditable(true);
+		
+	}
+	
+	public void onActionCancel(ActionEvent e) {
+		
+		updateFields();
+		
+		songName.setEditable(false);
+		songArtist.setEditable(false);
+		songAlbum.setEditable(false);
+		songYear.setEditable(false);
+	}
+	
+	public void onActionAdd(ActionEvent e) {
+		
+		songName.setText("");
+		songArtist.setText("");
+		songAlbum.setText("");
+		songYear.setText("");
+		
+		songName.setEditable(true);
+		songArtist.setEditable(true);
+		songAlbum.setEditable(true);
+		songYear.setEditable(true);
+		
+	}
+	
+	public void onActionDelete(ActionEvent e) {
+		
+		int index = listView.getSelectionModel().getSelectedIndex();
+		if (index == -1)
+			return;
+		
+		songList.remove(index);
+		obsList.remove(index);
+		
+		if (obsList.size() > 0) { //TODO: add proper index selection after delete
+			listView.getSelectionModel().select(0);
+			updateFields();
+		}
+		else {
+			songName.setText("");
+			songArtist.setText("");
+			songAlbum.setText("");
+			songYear.setText("");
+		}
+		
+	}
+	
+	
+	public void onActionSave(ActionEvent e) {
+	}
+	
 
 	private void showItem(Stage mainStage) {		
-		String item = listView.getSelectionModel().getSelectedItem();
+		
+		updateFields();
+	}
+	
+	private void updateFields() {
+		
 		int index = listView.getSelectionModel().getSelectedIndex();
+		if (index == -1) {
+			songName.setText("");
+			songArtist.setText("");
+			songAlbum.setText("");
+			songYear.setText("");
+			return;
+		}
 		
 		Song selectedSong = songList.get(index);
 		songName.setText(selectedSong.getName());
@@ -90,6 +166,8 @@ public class ListController {
 		} else {
 			songYear.setText("unavailable");
 		}
+		
 	}
+	
 
 }
