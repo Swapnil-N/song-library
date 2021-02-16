@@ -35,12 +35,10 @@ public class ListController {
 	TextField songAlbum;
 	@FXML
 	TextField songYear;
-	//@FXML
-	//Button editButton;
 
 	private List<Song> songList;
 	private ObservableList<String> obsList;
-	private boolean edit;
+	private String editDisplayName;
 
 	public void start(Stage mainStage) {
 		
@@ -52,6 +50,8 @@ public class ListController {
 			BufferedReader fileReader = new BufferedReader(new FileReader("songs.txt"));
 			while ((row = fileReader.readLine()) != null) {
 				String[] data = row.split("\\|");
+				if (data.length != 4)
+					continue;
 				songList.add(new Song(data[0], data[1], data[2], data[3]));
 			}
 			fileReader.close();
@@ -61,37 +61,29 @@ public class ListController {
 			e.printStackTrace();
 		}
 		
-		edit = false;
+		editDisplayName = null;
 		
-		addToObsList();
+		Collections.sort(songList);
+				
+		for (int i = 0; i < songList.size(); i++)
+			obsList.add(songList.get(i).getDisplayString());
 		
 		listView.setItems(obsList);
 
-		if (obsList.size() > 0) {
+		if (obsList.size() > 0)
 			listView.getSelectionModel().select(0);
-			showItem(mainStage);
-		}
+		updateFields();
 		
 		listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> showItem(mainStage));
 	}
 	
-	public void addToObsList() {
-		
-		Collections.sort(songList);
-		
-		obsList.clear();
-		
-		for (int i = 0; i < songList.size(); i++)
-			obsList.add(songList.get(i).getDisplayString());
-		
+	public List<Song> getSongList(){
+		return songList;
 	}
 	
 	public void onActionEdit(ActionEvent e) {
-		
-		Button editButton = (Button)e.getSource();
-		
-		edit = true;
 				
+		editDisplayName = songList.get(listView.getSelectionModel().getSelectedIndex()).getDisplayString();
 		editable(true);
 		
 	}
@@ -99,17 +91,26 @@ public class ListController {
 	public void onActionCancel(ActionEvent e) {
 		
 		updateFields();
-		
 		editable(false);
+		editDisplayName = null;
+		
 	}
 	
 	public void onActionAdd(ActionEvent e) {
 		
-		songName.setText(""); //change this to update
+		if (songName.isEditable()) {
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Hint");
+			alert.setContentText("Please use the save button to add/update changes");
+			alert.showAndWait();
+			return;
+		}
+		
+		songName.setText("");
 		songArtist.setText("");
 		songAlbum.setText("");
 		songYear.setText("");
-				
+		
 		editable(true);
 		
 	}
@@ -147,21 +148,27 @@ public class ListController {
 			return;
 		}
 		
-		for (int i=0; i<songList.size(); i++) {
-			if (newSong.compareTo(songList.get(i)) == 0) { //equals or .contains do no work
-				Alert alert = new Alert(AlertType.WARNING);
-				alert.setTitle("Duplicate Error");
-				alert.setContentText("The Song Name and Song Artist are already in the list");
-				alert.showAndWait();
-				return;
-			}
-		} 
+		if (!newSong.getDisplayString().equals(editDisplayName)) {
+			for (int i=0; i<songList.size(); i++) {
+				if (newSong.compareTo(songList.get(i)) == 0) { //equals or .contains do no work
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Duplicate Error");
+					alert.setContentText("The Song Name and Song Artist are already in the list");
+					alert.showAndWait();
+					return;
+				}
+			} 
+		}
 		
-		if(edit)
+		if(editDisplayName != null)
 			onActionDelete(null);
 		
 		songList.add(newSong);
-		addToObsList();
+		Collections.sort(songList);
+		obsList.clear();
+		
+		for (int i = 0; i < songList.size(); i++)
+			obsList.add(songList.get(i).getDisplayString());
 		
 		listView.getSelectionModel().select(songList.indexOf(newSong));
 		
@@ -176,10 +183,9 @@ public class ListController {
 		songYear.setEditable(bool);		
 	}
 	
-
 	private void showItem(Stage mainStage) {		
 		editable(false);
-		edit = false;
+		editDisplayName = null;
 		updateFields();
 	}
 	
@@ -202,5 +208,4 @@ public class ListController {
 		
 	}
 	
-
 }

@@ -49,6 +49,10 @@ public class Song implements Comparable<Song>{
 	public String getDisplayString() {
 		return name + " | " + artist;
 	}
+	
+	public String getTextFileString() {
+		return name + " |" + artist + " |" + album + " |" + year + " |\n";
+	}
 
 	@Override
 	public int compareTo(Song o) {
