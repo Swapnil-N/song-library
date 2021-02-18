@@ -29,25 +29,21 @@ public class ListController {
 	@FXML
 	ListView<String> listView;
 	@FXML
-	TextField songName;
+	TextField songName, songArtist, songAlbum, songYear;
 	@FXML
-	TextField songArtist;
-	@FXML
-	TextField songAlbum;
-	@FXML
-	TextField songYear;
+	Button addButton, editButton, deleteButton, saveButton, cancelButton;
 
 	private List<Song> songList;
 	private ObservableList<String> obsList;
 	private String editDisplayName;
 
 	public void start(Stage mainStage) {
-
 		songList = new ArrayList<>();
 		obsList = FXCollections.observableArrayList();
-		String row = "";
-
+		editDisplayName = null;
+		
 		try {
+			String row = "";
 			BufferedReader fileReader = new BufferedReader(new FileReader("songs.txt"));
 			while ((row = fileReader.readLine()) != null) {
 				String[] data = row.split("\\|");
@@ -62,8 +58,6 @@ public class ListController {
 			e.printStackTrace();
 		}
 
-		editDisplayName = null;
-
 		Collections.sort(songList);
 
 		for (int i = 0; i < songList.size(); i++)
@@ -76,20 +70,20 @@ public class ListController {
 		updateFields();
 
 		listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> showItem(mainStage));
+		
+		disable(false);
 	}
 
 	public void onActionEdit(ActionEvent e) {
-
 		if (listView.getSelectionModel().getSelectedIndex() == -1)
 			return;
 
 		editDisplayName = songList.get(listView.getSelectionModel().getSelectedIndex()).getDisplayString();
 		editable(true);
-
+		disable(true);
 	}
 
 	public void onActionAdd(ActionEvent e) {
-
 		if (songName.isEditable()) {
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Hint");
@@ -104,11 +98,10 @@ public class ListController {
 		songYear.setText("");
 
 		editable(true);
-
+		disable(true);
 	}
 
 	public void onActionDelete(ActionEvent e) {
-
 		if (listView.getSelectionModel().getSelectedIndex() == -1)
 			return;
 				
@@ -137,19 +130,17 @@ public class ListController {
 			
 			updateFields();
 		}
-		
+		disable(false);
 	}
 
 	public void onActionCancel(ActionEvent e) {
-
 		updateFields();
 		editable(false);
+		disable(false);
 		editDisplayName = null;
-
 	}
 
 	public void onActionSave(ActionEvent e) {
-
 		if (!songName.isEditable())
 			return;
 
@@ -211,28 +202,35 @@ public class ListController {
 		listView.getSelectionModel().select(songList.indexOf(newSong));
 
 		editable(false);
-
+		disable(false);
 	}
 
 	private void editable(boolean bool) {
-
 		songName.setEditable(bool);
 		songArtist.setEditable(bool);
 		songAlbum.setEditable(bool);
 		songYear.setEditable(bool);
-
+	}
+	
+	private void disable(boolean bool) {
+		addButton.setDisable(bool);
+		editButton.setDisable(bool);
+		deleteButton.setDisable(bool);
+		if (obsList.size() == 0) {
+			editButton.setDisable(true);
+			deleteButton.setDisable(true);
+		}
+		saveButton.setDisable(!bool);
+		cancelButton.setDisable(!bool);
 	}
 
 	private void showItem(Stage mainStage) {
-
 		editable(false);
 		editDisplayName = null;
 		updateFields();
-
 	}
 
 	private void updateFields() {
-
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if (index == -1) {
 			songName.setText("");
@@ -247,7 +245,6 @@ public class ListController {
 		songArtist.setText(selectedSong.getArtist());
 		songAlbum.setText(selectedSong.getAlbum());
 		songYear.setText(selectedSong.getYear());
-
 	}
 
 	public List<Song> getSongList() {
