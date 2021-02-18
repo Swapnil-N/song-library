@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -41,9 +42,9 @@ public class ListController {
 	private String editDisplayName;
 
 	public void start(Stage mainStage) {
-		
+
 		songList = new ArrayList<>();
-		obsList = FXCollections.observableArrayList();	
+		obsList = FXCollections.observableArrayList();
 		String row = "";
 
 		try {
@@ -60,44 +61,35 @@ public class ListController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		editDisplayName = null;
-		
+
 		Collections.sort(songList);
-				
+
 		for (int i = 0; i < songList.size(); i++)
 			obsList.add(songList.get(i).getDisplayString());
-		
+
 		listView.setItems(obsList);
 
 		if (obsList.size() > 0)
 			listView.getSelectionModel().select(0);
 		updateFields();
-		
+
 		listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> showItem(mainStage));
 	}
-	
-	public List<Song> getSongList(){
-		return songList;
-	}
-	
+
 	public void onActionEdit(ActionEvent e) {
-				
+
+		if (listView.getSelectionModel().getSelectedIndex() == -1)
+			return;
+
 		editDisplayName = songList.get(listView.getSelectionModel().getSelectedIndex()).getDisplayString();
 		editable(true);
-		
+
 	}
-	
-	public void onActionCancel(ActionEvent e) {
-		
-		updateFields();
-		editable(false);
-		editDisplayName = null;
-		
-	}
-	
+
 	public void onActionAdd(ActionEvent e) {
-		
+
 		if (songName.isEditable()) {
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Hint");
@@ -105,41 +97,57 @@ public class ListController {
 			alert.showAndWait();
 			return;
 		}
-		
+
 		songName.setText("");
 		songArtist.setText("");
 		songAlbum.setText("");
 		songYear.setText("");
-		
+
 		editable(true);
-		
+
 	}
-	
+
 	public void onActionDelete(ActionEvent e) {
-		
-		int index = listView.getSelectionModel().getSelectedIndex();
-		if (index == -1)
+
+		if (listView.getSelectionModel().getSelectedIndex() == -1)
 			return;
-		
-		songList.remove(index);
-		obsList.remove(index);
-		
-		if (index >= obsList.size())
-			index = obsList.size()-1;
-		listView.getSelectionModel().select(index);
-		
-		updateFields();
-		
+
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Confirm Delete");
+		alert.setContentText("Please confirm that you would like to delete the selected song");
+		Optional<ButtonType> result = alert.showAndWait();
+
+		if (result.get() == ButtonType.OK) {
+			int index = listView.getSelectionModel().getSelectedIndex();
+			if (index == -1)
+				return;
+
+			songList.remove(index);
+			obsList.remove(index);
+
+			if (index >= obsList.size())
+				index = obsList.size() - 1;
+			listView.getSelectionModel().select(index);
+
+			updateFields();
+		}
 	}
-	
-	
+
+	public void onActionCancel(ActionEvent e) {
+
+		updateFields();
+		editable(false);
+		editDisplayName = null;
+
+	}
+
 	public void onActionSave(ActionEvent e) {
-				
+
 		if (!songName.isEditable())
 			return;
-		
+
 		Song newSong = new Song(songName.getText(), songArtist.getText(), songAlbum.getText(), songYear.getText());
-		
+
 		if (newSong.getName().length() == 0 || newSong.getArtist().length() == 0) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Missing Info");
@@ -147,50 +155,77 @@ public class ListController {
 			alert.showAndWait();
 			return;
 		}
-		
+
 		if (!newSong.getDisplayString().equals(editDisplayName)) {
-			for (int i=0; i<songList.size(); i++) {
-				if (newSong.compareTo(songList.get(i)) == 0) { //equals or .contains do no work
+			for (int i = 0; i < songList.size(); i++) {
+				if (newSong.compareTo(songList.get(i)) == 0) { // equals or .contains do no work
 					Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Duplicate Error");
+					alert.setTitle("Duplicate Song");
 					alert.setContentText("The Song Name and Song Artist are already in the list");
 					alert.showAndWait();
 					return;
 				}
-			} 
+			}
 		}
-		
-		if(editDisplayName != null)
+
+		if (newSong.getName().contains("|") || newSong.getArtist().contains("|") || newSong.getAlbum().contains("|")) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Invalid Character Entered");
+			alert.setContentText("A vertical bar ('|') is not permitted in the Song Name, Artist, or Album");
+			alert.showAndWait();
+			return;
+		}
+
+		if (newSong.getYear() != null && !newSong.getYear().equals("")) {
+			try {
+				Integer yearInteger = Integer.parseInt(newSong.getYear());
+				if (yearInteger < 0) {
+					throw new NumberFormatException("Negative Value");
+				}
+			} catch (NumberFormatException ex) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Invalid Year");
+				alert.setContentText("The Song Year must be a positive integer.");
+				alert.showAndWait();
+				return;
+			}
+		}
+
+		if (editDisplayName != null)
 			onActionDelete(null);
-		
+
 		songList.add(newSong);
 		Collections.sort(songList);
 		obsList.clear();
-		
+
 		for (int i = 0; i < songList.size(); i++)
 			obsList.add(songList.get(i).getDisplayString());
-		
+
 		listView.getSelectionModel().select(songList.indexOf(newSong));
-		
+
 		editable(false);
-		
+
 	}
-	
+
 	private void editable(boolean bool) {
+
 		songName.setEditable(bool);
 		songArtist.setEditable(bool);
 		songAlbum.setEditable(bool);
-		songYear.setEditable(bool);		
+		songYear.setEditable(bool);
+
 	}
-	
-	private void showItem(Stage mainStage) {		
+
+	private void showItem(Stage mainStage) {
+
 		editable(false);
 		editDisplayName = null;
 		updateFields();
+
 	}
-	
+
 	private void updateFields() {
-		
+
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if (index == -1) {
 			songName.setText("");
@@ -199,13 +234,17 @@ public class ListController {
 			songYear.setText("");
 			return;
 		}
-		
+
 		Song selectedSong = songList.get(index);
 		songName.setText(selectedSong.getName());
 		songArtist.setText(selectedSong.getArtist());
 		songAlbum.setText(selectedSong.getAlbum());
 		songYear.setText(selectedSong.getYear());
-		
+
 	}
-	
+
+	public List<Song> getSongList() {
+		return songList;
+	}
+
 }
