@@ -111,13 +111,19 @@ public class ListController {
 
 		if (listView.getSelectionModel().getSelectedIndex() == -1)
 			return;
+				
+		boolean delete = true;
+		
+		if (e != null) {
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Confirm Delete");
+			alert.setContentText("Please confirm that you would like to delete the selected song");
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() != ButtonType.OK)
+				delete = false;
+		}
 
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Confirm Delete");
-		alert.setContentText("Please confirm that you would like to delete the selected song");
-		Optional<ButtonType> result = alert.showAndWait();
-
-		if (result.get() == ButtonType.OK) {
+		if (delete) {
 			int index = listView.getSelectionModel().getSelectedIndex();
 			if (index == -1)
 				return;
@@ -128,9 +134,10 @@ public class ListController {
 			if (index >= obsList.size())
 				index = obsList.size() - 1;
 			listView.getSelectionModel().select(index);
-
+			
 			updateFields();
 		}
+		
 	}
 
 	public void onActionCancel(ActionEvent e) {
